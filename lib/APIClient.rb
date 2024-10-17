@@ -8,6 +8,9 @@ require_relative 'NYTimesAPI'
 require_relative 'FlightDetails'
 require_relative 'Article'
 
+asdf
+asdf
+
 module WanderWise
   class APIClient
     def initialize

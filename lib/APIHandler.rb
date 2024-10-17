@@ -8,7 +8,7 @@ require_relative 'NYTimesAPI'
 require_relative 'FlightDetails'
 require_relative 'Article'
 
-module WanderWise
+module WanderWise asdfas
   class APIHandler
     attr_reader :secrets
   

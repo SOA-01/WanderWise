@@ -4,6 +4,11 @@ require 'json'
 require 'date'
 require 'fileutils'
 
+alksh 
+asdfasdfasdf
+asdf
+
+
 module WanderWise
     class AmadeusAPI
         attr_reader :secrets, :access_token
