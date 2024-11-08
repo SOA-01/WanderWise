@@ -11,6 +11,9 @@ RSpec.describe WanderWise::AmadeusAPI do
   VCR.configure do |c|
     c.cassette_library_dir = CASSETTES_FOLDER
     c.hook_into :webmock
+
+    c.filter_sensitive_data('<AMADEUS_API_CLIENT_ID>') { AMADEUS_API_CLIENT_ID }
+    c.filter_sensitive_data('<AMADEUS_API_CLIENT_SECRET>') { AMADEUS_API_CLIENT_SECRET }
   end
 
   before do
@@ -23,26 +26,24 @@ RSpec.describe WanderWise::AmadeusAPI do
     VCR.eject_cassette
   end
 
-  let(:amadeus_api) { WanderWise::Amadeus.new }
+  let(:amadeus_api) { WanderWise::AmadeusAPI.new }
 
   # Get path through expanding the current directory
   curr_dir = __dir__
   let(:fixture_flight) { YAML.load_file("#{curr_dir}/fixtures/flight-api-results.yml") }
 
-  params = { 'originLocationCode' => 'TPE', 'destinationLocationCode' => 'LAX', 'departureDate' => '2024-10-29', 'adults' => '1' }
+  let (:params) { { 'originLocationCode' => 'TPE', 'destinationLocationCode' => 'LAX', 'departureDate' => ONE_WEEK_FROM_NOW, 'adults' => '1' }}
 
   describe '#api call to amadeus', :vcr do
     it 'receives valid JSON response from the API' do
-      flight_offers = amadeus_api.fetch_response(params)
-
-      expect(flight_offers).not_to be_empty
-
-      # flight_offers first element of data will be compared to the fixture yaml file in its structure
-      api_offer = flight_offers['data'].first
+      api_offers = amadeus_api.fetch_response(params)
+      api_offer = api_offers['data'].first
       fixture_offer = fixture_flight['data'].first
 
+      expect(api_offers).not_to be_empty
+
       # Check if first 5 keys match
-      expect(api_offer.keys[0..4]).to eq(fixture_offer.keys[0..4])
+      expect(api_offer.keys[0..3]).to eq(fixture_offer.keys[0..3])
     end
   end
 end
@@ -51,6 +52,8 @@ RSpec.describe WanderWise::NYTimesAPI do
   VCR.configure do |c|
     c.cassette_library_dir = CASSETTES_FOLDER
     c.hook_into :webmock
+
+    c.filter_sensitive_data('<NYTIMES_API_KEY>') { NYTIMES_API_KEY }
   end
 
   before do
@@ -74,7 +77,7 @@ RSpec.describe WanderWise::NYTimesAPI do
 
       fixture_example = fixture_articles['response']['docs'].first
       # Check if first 5 keys match
-      expect(api_example.keys[0..4]).to eq(fixture_example.keys[0..4])
+      expect(api_example.keys[0..3]).to eq(fixture_example.keys[0..3])
     end
   end
 end

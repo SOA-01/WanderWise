@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'airports'
+gem 'database_cleaner'
 gem 'flog'
 gem 'figaro'
 gem 'http'

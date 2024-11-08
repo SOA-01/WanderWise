@@ -1,19 +1,21 @@
 # frozen_string_literal: true
 
-# spec/helpers/database_helper.rb
+require 'database_cleaner'
 
-require 'sequel'
+ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'])
+DatabaseCleaner.url_allowlist = [ENV['DATABASE_URL']]
 
-module DatabaseHelper
+# Helper to clean database during test runs
+class DatabaseHelper
+  def self.setup_database_cleaner
+    DatabaseCleaner.allow_remote_database_url = true
+    DatabaseCleaner.strategy = :deletion
+    DatabaseCleaner.start
+  end
+
   def self.wipe_database
-    # Assuming `app.db` provides access to the Sequel database connection
-    db = WanderWise::App.db
-
-    # Use transaction for safe, atomic operation
-    db.transaction do
-      db.tables.each do |table|
-        db[table].truncate(cascade: true, restart: true) unless table == :schema_migrations
-      end
-    end
+    WanderWise::App.db.run('PRAGMA foreign_keys = OFF')
+    DatabaseCleaner.clean
+    WanderWise::App.db.run('PRAGMA foreign_keys = ON')
   end
 end

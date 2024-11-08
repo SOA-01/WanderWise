@@ -8,8 +8,8 @@ module WanderWise
     # Repository for Entities
     module For
       ENTITY_REPOSITORY = {
-        Entity::Flight => Flights,
-        Entity::Article => Articles
+        WanderWise::Flight => Flights,
+        WanderWise::Article => Articles
       }.freeze
 
       def self.klass(entity_klass)

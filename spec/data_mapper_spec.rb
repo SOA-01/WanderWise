@@ -22,7 +22,7 @@ RSpec.describe WanderWise::FlightMapper do
     VCR.eject_cassette
   end
 
-  let(:gateway) { WanderWise::Amadeus.new }
+  let(:gateway) { WanderWise::AmadeusAPI.new }
   let(:mapper) { WanderWise::FlightMapper.new(gateway) }
 
   curr_dir = __dir__
@@ -30,7 +30,7 @@ RSpec.describe WanderWise::FlightMapper do
 
   describe '#find_flight' do
     it 'transforms API response into FlightsEntity object' do
-      params = { originLocationCode: 'TPE', destinationLocationCode: 'LAX', departureDate: '2024-10-29', adults: 1 }
+      params = { originLocationCode: 'TPE', destinationLocationCode: 'LAX', departureDate: ONE_WEEK_FROM_NOW, adults: 1 }
       
       flight = mapper.find_flight(params).first
 
@@ -61,17 +61,13 @@ RSpec.describe WanderWise::ArticleMapper do
   let(:mapper) { WanderWise::ArticleMapper.new(gateway) }
 
   curr_dir = __dir__
-  let(:fixture_articles) { YAML.load_file("#{curr_dir}/fixtures/nytimes-api-results.yml") }
+  let(:fixture_articles) { YAML.load_file("#{curr_dir}/fixtures/nytimes-results.yml") }
 
   describe '#find_articles' do
     it 'transforms API response into an array of ArticleEntity objects' do
       articles = mapper.find_articles('Taiwan')
-      
       expect(articles).to be_an(Array)
       expect(articles.first).to be_a(WanderWise::Article)
-      # expect(articles.first.title).to eq(fixture_articles.first.dig('headline', 'main'))
-      # expect(articles.first.published_date).to eq(fixture_articles.first['pub_date'])
-      # expect(articles.first.url).to eq(fixture_articles.first['web_url'])
     end
   end
 end
